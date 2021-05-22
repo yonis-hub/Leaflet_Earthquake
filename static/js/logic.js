@@ -1,8 +1,7 @@
 console.log('loading logic.js')
 
 // Store our API endpoint inside queryUrl
-var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=" +
-  "2014-01-02&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
+var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function(data) {
@@ -29,10 +28,29 @@ function createFeatures(earthquakeData) {
   createMap(earthquakes);
 }
 
+
+// Define the color of the marker based on the depth of the earthquake.
+function depthColor(depth) {
+  switch (true) {
+    case depth > 5:
+      return "#ea2c2c";
+    case depth > 4:
+      return "#ea822c";
+    case depth > 3:
+      return "#ee9c00";
+    case depth > 2:
+      return "#eecc00";
+    case depth > 1:
+      return "#d4ee00";
+    default:
+      return "#98ee00";
+  }
+}
+
+
 function createMap(earthquakes) {
 
-  
-  // Define streetmap and darkmap layers
+  // Define tile layers
   var satelliteMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
     maxZoom: 18,
@@ -81,7 +99,7 @@ function createMap(earthquakes) {
     center: [
       37.09, -95.71
     ],
-    zoom: 5,
+    zoom: 2.5,
     layers: [satelliteMap, earthquakes]
   });
 
@@ -91,4 +109,24 @@ function createMap(earthquakes) {
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(earthquakeMap);
+
+
+      // Create legend for Depth of each earthquake
+      var legend = L.control({ position: "bottomright" });
+      legend.onAdd = function() {
+          var div = L.DomUtil.create("div", "info legend"), 
+          magnitudeLevels = [0, 10, 30, 50, 70, 90];
+  
+          div.innerHTML += "<h3>Depth Recorded</h3>"
+  
+          for (var i = 0; i < magnitudeLevels.length; i++) {
+              div.innerHTML +=
+                  '<i style="background: ' + depthColor(magnitudeLevels[i] + 1) + '"></i> ' +
+                  magnitudeLevels[i] + (magnitudeLevels[i + 1] ? '&ndash;' + magnitudeLevels[i + 1] + '<br>' : '+');
+          }
+          return div;
+      };
+  
+      // Add the legend to the map
+      legend.addTo(earthquakeMap);
 }
