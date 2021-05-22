@@ -51,17 +51,17 @@ function createMagnitude(earthquakeData) {
 function depthColor(depth) {
   switch (true) {
     case depth > 90:
-      return "#ebff19";
+      return "#f63f0a"; 
     case depth > 70:
-      return "#ffe919";
-    case depth > 50:
-      return "#ffb519";
-    case depth > 30:
-      return "#ff8a19";
-    case depth > 10:
       return "#ff6219";
+    case depth > 50:
+      return "#ff8a19";
+    case depth > 30:
+      return "#ffb519";
+    case depth > 10:
+      return "#ffe919";
     default:
-      return "#f63f0a";
+      return "#ebff19"; 
   }
 }
 
@@ -118,7 +118,7 @@ function createMap(earthquakes) {
       37.09, -95.71
     ],
     zoom: 2.5,
-    layers: [satelliteMap, earthquakes]
+    layers: [darkmap, earthquakes]
   });
 
   // Create a layer control
