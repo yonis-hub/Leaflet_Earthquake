@@ -3,27 +3,45 @@ console.log('loading logic.js')
 // Store our API endpoint inside queryUrl
 var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
-// Perform a GET request to the query URL
+// Perform a GET request to the query URL and send it to creatMagnigtude function
 d3.json(queryUrl).then(function(data) {
   // Once we get a response, send the data.features object to the createFeatures function
-  createFeatures(data.features);
+  createMagnitude(data.features);
 });
 
-function createFeatures(earthquakeData) {
+function createMagnitude(earthquakeData) {
 
   // Define a function we want to run once for each feature in the features array
   // Give each feature a popup describing the place and time of the earthquake
   function onEachFeature(feature, layer) {
-    layer.bindPopup("<h3>" + feature.properties.place +
-      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+    layer.bindPopup("<h3>" + feature.properties.place + "</h3><p>" + feature.properties.mag + " Magnitude</p><p>" + "</h3><p>" + feature.geometry.coordinates[2] + " Depth</p><p>" + new Date(feature.properties.time) + "</p>");
+  }
+  
+  // Function to update the marker size for map readability
+  function markerSize(magnitude) {
+    if (magnitude === 0) {
+      return 1;
+    }
+    return magnitude * 3;
   }
 
   // Create a GeoJSON layer containing the features array on the earthquakeData object
-  // Run the onEachFeature function once for each piece of data in the array
   var earthquakes = L.geoJSON(earthquakeData, {
-    onEachFeature: onEachFeature
-  });
+    pointToLayer: function (feature, latlng) {
+        return new L.circleMarker(latlng, {
+            radius: markerSize(feature.properties.mag),
+            color: "black",
+            weight: 1,
+            fill: true,
+            fillColor: (depthColor(feature.geometry.coordinates[2])),
+            fillOpacity: 1
+        })
+    },
 
+    // Call function
+    onEachFeature: onEachFeature
+
+});
   // Sending our earthquakes layer to the createMap function
   createMap(earthquakes);
 }
@@ -32,18 +50,18 @@ function createFeatures(earthquakeData) {
 // Define the color of the marker based on the depth of the earthquake.
 function depthColor(depth) {
   switch (true) {
-    case depth > 5:
-      return "#ea2c2c";
-    case depth > 4:
-      return "#ea822c";
-    case depth > 3:
-      return "#ee9c00";
-    case depth > 2:
-      return "#eecc00";
-    case depth > 1:
-      return "#d4ee00";
+    case depth > 90:
+      return "#ebff19";
+    case depth > 70:
+      return "#ffe919";
+    case depth > 50:
+      return "#ffb519";
+    case depth > 30:
+      return "#ff8a19";
+    case depth > 10:
+      return "#ff6219";
     default:
-      return "#98ee00";
+      return "#f63f0a";
   }
 }
 
