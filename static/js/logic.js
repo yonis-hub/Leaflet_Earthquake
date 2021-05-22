@@ -14,7 +14,7 @@ function createMagnitude(earthquakeData) {
   // Define a function we want to run once for each feature in the features array
   // Give each feature a popup describing the place and time of the earthquake
   function onEachFeature(feature, layer) {
-    layer.bindPopup("<h3>" + feature.properties.place + "</h3><p>" + feature.properties.mag + " Magnitude</p><p>" + "</h3><p>" + feature.geometry.coordinates[2] + " Depth</p><p>" + new Date(feature.properties.time) + "</p>");
+    layer.bindPopup("<h2>" + feature.properties.place + "</h2><p>" + feature.properties.mag + " Magnitude</p><p>" + "</h2><p>" + feature.geometry.coordinates[2] + " Depth</p><p>" + new Date(feature.properties.time) + "</p>");
   }
   
   // Function to update the marker size for map readability
@@ -30,7 +30,7 @@ function createMagnitude(earthquakeData) {
     pointToLayer: function (feature, latlng) {
         return new L.circleMarker(latlng, {
             radius: markerSize(feature.properties.mag),
-            color: "black",
+            color: "white",
             weight: 1,
             fill: true,
             fillColor: (depthColor(feature.geometry.coordinates[2])),
@@ -135,7 +135,7 @@ function createMap(earthquakes) {
           var div = L.DomUtil.create("div", "info legend"), 
           magnitudeLevels = [0, 10, 30, 50, 70, 90];
   
-          div.innerHTML += "<h3>Depth Recorded</h3>"
+          div.innerHTML += "<h3>Depth Chart</h3>"
   
           for (var i = 0; i < magnitudeLevels.length; i++) {
               div.innerHTML +=
