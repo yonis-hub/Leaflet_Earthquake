@@ -109,7 +109,7 @@ function createMap(earthquakes) {
   // Create overlay object to hold our overlay layer
   var overlayMaps = {
     Earthquakes: earthquakes,
-    // "Fault Lines": tectonicPlates
+    // faultLines: tectonicPlates
   };
 
   // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -135,7 +135,6 @@ function createMap(earthquakes) {
           var div = L.DomUtil.create("div", "info legend"), 
           magnitudeLevels = [0, 10, 30, 50, 70, 90];
   
-          div.innerHTML += "<h3>Depth Chart</h3>"
   
           for (var i = 0; i < magnitudeLevels.length; i++) {
               div.innerHTML +=
